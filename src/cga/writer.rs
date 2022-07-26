@@ -44,6 +44,13 @@ impl Writer {
         }
     }
 
+    /// Writes a complete string to the current position of the CGA buffer.
+    pub fn write_string(&mut self, string: &str) {
+        for byte in string.bytes() {
+            self.write_byte(byte);
+        }
+    }
+
     pub fn set_color(&mut self, color_code: ColorCode) {
         self.color_code = color_code;
     }
