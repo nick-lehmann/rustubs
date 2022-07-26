@@ -35,7 +35,7 @@ impl Writer {
                 let col = self.position.offset;
 
                 self.buffer.chars[row][col] = DisplayChar {
-                    ascii_character: byte,
+                    character: HighASCII::from_byte(byte),
                     color_code: self.color_code,
                 };
 
