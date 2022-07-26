@@ -7,6 +7,7 @@ use core::panic::PanicInfo;
 /// make sure the compiler does not change the name.
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
+    #[allow(clippy::empty_loop)]
     loop {}
 }
 
