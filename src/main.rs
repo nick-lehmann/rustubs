@@ -1,7 +1,10 @@
 #![no_std]
 #![no_main]
+#![feature(type_ascription)]
 
 use core::panic::PanicInfo;
+
+use cga::buffer::Position;
 
 mod cga;
 
@@ -9,13 +12,15 @@ mod cga;
 /// make sure the compiler does not change the name.
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    cga::WRITER
+    cga::writer::WRITER
         .lock()
         .set_color(cga::ColorCode::new(cga::Color::Green, cga::Color::Black));
 
     for i in 0..10 {
         println!("Hello world {}", i);
     }
+
+    cga::cursor::set_cursor_position(Position { line: 5, offset: 3 });
 
     #[allow(clippy::empty_loop)]
     loop {}
