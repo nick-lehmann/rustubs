@@ -1,8 +1,15 @@
+use lazy_static::lazy_static;
+use spin::Mutex;
+
 use super::{
     buffer::{Buffer, Position, CGA_BUFFER_ADDRESS, CGA_BUFFER_HEIGHT, CGA_BUFFER_WIDTH},
     characters::{DisplayChar, HighASCII},
     Color, ColorCode,
 };
+
+lazy_static! {
+    pub static ref WRITER: Mutex<Writer> = Mutex::new(Writer::default());
+}
 
 pub struct Writer {
     position: Position,

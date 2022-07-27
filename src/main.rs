@@ -9,12 +9,12 @@ mod cga;
 /// make sure the compiler does not change the name.
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    let mut writer = cga::Writer::default();
-
-    writer.set_color(cga::ColorCode::new(cga::Color::Green, cga::Color::Black));
+    cga::WRITER
+        .lock()
+        .set_color(cga::ColorCode::new(cga::Color::Green, cga::Color::Black));
 
     for i in 0..10 {
-        writeln!(writer, "Hello brave new world! {}", i).unwrap();
+        writeln!(cga::WRITER.lock(), "Hello brave new world! {}", i).unwrap();
     }
 
     #[allow(clippy::empty_loop)]
