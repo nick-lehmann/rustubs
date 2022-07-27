@@ -27,6 +27,7 @@ pub extern "C" fn _start() -> ! {
 /// never returns. `PanicInfo` gives us some insight into where the panic has
 /// happened. For now, we can not use this information at all.
 #[panic_handler]
-fn panic(_info: &PanicInfo) -> ! {
+fn panic(info: &PanicInfo) -> ! {
+    println!("{}", info);
     loop {}
 }
