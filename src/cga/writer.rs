@@ -20,6 +20,13 @@ impl Default for Writer {
     }
 }
 
+impl core::fmt::Write for Writer {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        self.write_string(s);
+        Ok(())
+    }
+}
+
 impl Writer {
     /// Writes a single byte to the current position of the CGA buffer.
     /// Afterwards, it updates the current position.
