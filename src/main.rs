@@ -13,11 +13,16 @@ pub extern "C" fn _start() -> ! {
 
     writer.set_color(cga::ColorCode::new(cga::Color::Green, cga::Color::Black));
 
-    writer.write_byte(b'H');
-    writer.write_byte(b'e');
-    writer.write_byte(b'l');
-    writer.write_byte(b'l');
-    writer.write_byte(b'o');
+    writer.write_string("Hellö brave new world! 1\n");
+    writer.write_string("Hellö brave new world! 2\n");
+    writer.write_string("Hellö brave new world! 3\n");
+    writer.write_string("Hellö brave new world! 4\n");
+    writer.write_string("Hellö brave new world! 5\n");
+    writer.write_string("Hellö brave new world! 6\n");
+    writer.write_string("Hellö brave new world! 7\n");
+    writer.write_string("Hellö brave new world! 8\n");
+    writer.write_string("Hellö brave new world! 9\n");
+    writer.write_string("Hellö brave new world! 10\n");
 
     #[allow(clippy::empty_loop)]
     loop {}
