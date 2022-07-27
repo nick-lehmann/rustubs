@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-use core::{fmt::Write, panic::PanicInfo};
+use core::panic::PanicInfo;
 
 mod cga;
 
@@ -14,7 +14,7 @@ pub extern "C" fn _start() -> ! {
         .set_color(cga::ColorCode::new(cga::Color::Green, cga::Color::Black));
 
     for i in 0..10 {
-        writeln!(cga::WRITER.lock(), "Hello brave new world! {}", i).unwrap();
+        println!("Hello world {}", i);
     }
 
     #[allow(clippy::empty_loop)]

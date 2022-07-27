@@ -6,4 +6,4 @@ mod color;
 mod writer;
 
 pub use color::{Color, ColorCode};
-pub use writer::{Writer, WRITER};
+pub use writer::*;
