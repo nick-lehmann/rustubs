@@ -124,3 +124,28 @@ impl Writer {
         self.position.line += 1;
     }
 }
+
+/// Pay attention, as println! will simply continue to print on the screen. The
+/// printed content will not be cleared after each test run.
+#[test_case]
+fn test_println_output() {
+    let s = "Some test string";
+    println!("{}", s);
+
+    let buffer = &WRITER.lock().buffer;
+    for (i, c) in s.chars().enumerate() {
+        let screen_char = buffer.chars[0][i].read();
+        assert_eq!(screen_char.character.char() as char, c);
+    }
+}
+
+#[test_case]
+fn test_println_simple() {
+    println!("test_println_simple output");
+}
+#[test_case]
+fn test_println_many() {
+    for _ in 0..200 {
+        println!("test_println_many output");
+    }
+}

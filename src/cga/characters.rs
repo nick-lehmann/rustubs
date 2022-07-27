@@ -19,6 +19,10 @@ impl HighASCII {
             _ => HighASCII(UNKNOWN_CHARACTER_REPLACEMENT),
         }
     }
+
+    pub fn char(&self) -> u8 {
+        self.0
+    }
 }
 
 // TODO: Custom Display implementation?
