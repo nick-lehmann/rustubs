@@ -15,6 +15,8 @@ pub mod serial;
 pub fn init() {
     gdt::init();
     interrupts::init_idt();
+    unsafe { interrupts::hardware::PICS.lock().initialize() };
+    x86_64::instructions::interrupts::enable();
 }
 
 pub trait Testable {
