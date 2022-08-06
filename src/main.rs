@@ -6,11 +6,13 @@
 
 use core::panic::PanicInfo;
 
-use rustubs::println;
+use rustubs::{init, println};
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
     println!("Hello World!");
+
+    init();
 
     #[cfg(test)]
     test_main();
