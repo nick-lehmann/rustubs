@@ -8,7 +8,7 @@
 use core::panic::PanicInfo;
 
 pub mod cga;
-mod gdt;
+pub mod gdt;
 mod interrupts;
 pub mod serial;
 

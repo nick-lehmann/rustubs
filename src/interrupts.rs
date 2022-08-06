@@ -8,10 +8,9 @@ lazy_static! {
         let mut idt = InterruptDescriptorTable::new();
 
         idt.breakpoint.set_handler_fn(handle_breakpoint);
-        idt.double_fault.set_handler_fn(handle_double_fault);
         unsafe {
-            idt.divide_error
-                .set_handler_fn(handle_divide_error)
+            idt.double_fault
+                .set_handler_fn(handle_double_fault)
                 .set_stack_index(DOUBLE_FAULT_IST_INDEX);
         }
 
@@ -30,10 +29,6 @@ extern "x86-interrupt" fn handle_breakpoint(stack_frame: InterruptStackFrame) {
 // x86 does not allow to return from a double fault handler
 extern "x86-interrupt" fn handle_double_fault(stack_frame: InterruptStackFrame, _: u64) -> ! {
     panic!("EXCEPTION: DOUBLE FAULT\n{:#?}", stack_frame);
-}
-
-extern "x86-interrupt" fn handle_divide_error(stack_frame: InterruptStackFrame) {
-    println!("EXCEPTION: DIVIDE ERROR\n{:#?}", stack_frame);
 }
 
 /// If the function executes until the end, we know that the interrupt handlings
