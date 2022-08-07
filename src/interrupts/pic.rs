@@ -1,7 +1,4 @@
 use pic8259::ChainedPics;
-use x86_64::structures::idt::InterruptStackFrame;
-
-use crate::print;
 
 pub const PIC_1_OFFSET: u8 = 32;
 pub const PIC_2_OFFSET: u8 = PIC_1_OFFSET + 8;

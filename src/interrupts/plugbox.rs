@@ -16,8 +16,7 @@ impl Plugbox {
 
         unsafe {
             pics.initialize();
-            // Disable all interrupts by default.
-            // pics.write_masks(0xff, 0xff);
+            pics.disable();
         };
 
         unsafe {
@@ -37,24 +36,23 @@ impl Plugbox {
         }
     }
 
-    pub fn assign(&mut self, index: PICLine, gate: Gate) {
-        let offset: usize = index.into();
+    fn allow_pic_line(&self, line: &PICLine) {
+        let mut pics = PICS.lock();
+        let mut masks = unsafe { pics.read_masks() };
 
+        let i: usize = line.clone().into();
+        let pic_index: usize = i / 8;
+        masks[pic_index] &= !(1 << (i % 8)); // Unset correct bit.
+
+        unsafe { pics.write_masks(masks[0], masks[1]) };
+    }
+
+    pub fn assign(&mut self, line: PICLine, gate: Gate) {
+        let offset: usize = line.clone().into();
         unsafe {
             IDT[32 + offset].set_handler_fn(gate);
-            // IDT.load();
         }
-        // let mut pics = PICS.lock();
 
-        // let mut masks = unsafe { pics.read_masks() };
-
-        // let i: usize = index.into();
-        // let pic_index: usize = i / 8;
-        // masks[pic_index] |= 1 << (i % 8);
-
-        // masks[0] = 0xFF;
-        // masks[1] = 0xFF;
-
-        // unsafe { pics.write_masks(masks[0], masks[1]) };
+        self.allow_pic_line(&line);
     }
 }
