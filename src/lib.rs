@@ -9,13 +9,23 @@ use core::panic::PanicInfo;
 
 pub mod cga;
 pub mod gdt;
+mod hardware;
 mod interrupts;
 pub mod serial;
 
+use hardware::{keyboard::handle_keyboard_interrupt, timer::handle_timer_interrupt};
+
+use crate::interrupts::{PICLine, Plugbox};
+
 pub fn init() {
     gdt::init();
-    interrupts::init_idt();
-    unsafe { interrupts::hardware::PICS.lock().initialize() };
+
+    let mut plugbox = Plugbox::new();
+    plugbox.load();
+
+    plugbox.assign(PICLine::Timer, handle_timer_interrupt);
+    plugbox.assign(PICLine::Keyboard, handle_keyboard_interrupt);
+
     x86_64::instructions::interrupts::enable();
 }
 
