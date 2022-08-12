@@ -1,14 +1,25 @@
 use x86_64::structures::idt::{HandlerFunc, InterruptDescriptorTable};
 
-use super::pic::PICS;
 use super::traps;
+use super::{handlers::INTERRUPT_HANDLERS, pic::PICS};
+use crate::println;
 use crate::{gdt, interrupts::pic::PICLine};
 
 static mut IDT: InterruptDescriptorTable = InterruptDescriptorTable::new();
 
 type Gate = HandlerFunc;
 
-pub struct Plugbox {}
+pub fn guardian(slot: usize) {
+    println!("Handle interrupt {}", slot);
+
+    unsafe {
+        PICS.lock().notify_end_of_interrupt(33);
+    }
+}
+
+pub struct Plugbox {
+    handlers: [Option<Gate>; 256],
+}
 
 impl Plugbox {
     pub fn new() -> Self {
@@ -27,7 +38,16 @@ impl Plugbox {
                 .set_stack_index(gdt::tss::DOUBLE_FAULT_IST_INDEX); // new
         }
 
-        Plugbox {}
+        // Set handlers which all refer to the guardian function.
+        for i in 32..64 {
+            unsafe {
+                IDT[i].set_handler_fn(INTERRUPT_HANDLERS[i - 32]);
+            }
+        }
+
+        Plugbox {
+            handlers: [None; 256],
+        }
     }
 
     pub fn load(&self) {
@@ -49,9 +69,9 @@ impl Plugbox {
 
     pub fn assign(&mut self, line: PICLine, gate: Gate) {
         let offset: usize = line.clone().into();
-        unsafe {
-            IDT[32 + offset].set_handler_fn(gate);
-        }
+        let index = 32 + offset;
+
+        self.handlers[index] = Some(gate);
 
         self.allow_pic_line(&line);
     }
