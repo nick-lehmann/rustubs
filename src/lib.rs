@@ -13,18 +13,19 @@ mod hardware;
 mod interrupts;
 pub mod serial;
 
-use hardware::{keyboard::handle_keyboard_interrupt, timer::handle_timer_interrupt};
+use hardware::keyboard::KEYBOARD_GATE;
+use interrupts::PICLine;
 
-use crate::interrupts::{PICLine, Plugbox};
+use crate::interrupts::PLUGBOX;
 
 pub fn init() {
     gdt::init();
 
-    let mut plugbox = Plugbox::new();
+    let mut plugbox = PLUGBOX.lock();
     plugbox.load();
 
-    plugbox.assign(PICLine::Timer, handle_timer_interrupt);
-    plugbox.assign(PICLine::Keyboard, handle_keyboard_interrupt);
+    // plugbox.assign(PICLine::Timer, handle_timer_interrupt);
+    plugbox.assign(PICLine::Keyboard, &KEYBOARD_GATE);
 
     x86_64::instructions::interrupts::enable();
 }

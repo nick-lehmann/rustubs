@@ -1,9 +1,9 @@
 use lazy_static::lazy_static;
 use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
 use spin::Mutex;
-use x86_64::{instructions::port::Port, structures::idt::InterruptStackFrame};
+use x86_64::instructions::port::Port;
 
-use crate::{interrupts::PICS, print};
+use crate::{print, interrupts::Gate};
 
 lazy_static! {
     static ref KEYBOARD: Mutex<Keyboard<layouts::Us104Key, ScancodeSet1>> = Mutex::new(
@@ -11,14 +11,30 @@ lazy_static! {
     );
 }
 
-const KEYBOARD_DATA_PORT: u16 = 0x60;
+/// Port for reading scancodes from the keyboard.
+static mut KEYBOARD_DATA_PORT: Port<u8> = Port::new(0x60);
 
-pub extern "x86-interrupt" fn handle_keyboard_interrupt(_stack: InterruptStackFrame) {
+pub static KEYBOARD_GATE: Gate = Gate {
+    prologue: keyboard_prologue,
+    epilogue: keyboard_epilogue,
+};
+
+/// Simple buffer to save the current key pressed.
+///
+/// The keyboard prologue will save the key pressed in this buffer.
+/// After that, the epilogue will read the key from this buffer.
+static mut KEYBOARD_BUFFER: u8 = 0x00;
+
+/// The prologue of the keyboard interrupt handler.
+fn keyboard_prologue() -> bool {
+    unsafe { KEYBOARD_BUFFER = KEYBOARD_DATA_PORT.read() };
+    true
+}
+
+/// The epilogue of the keyboard interrupt handler.
+fn keyboard_epilogue() {
     let mut keyboard = KEYBOARD.lock();
-
-    let mut data_port = Port::new(KEYBOARD_DATA_PORT);
-
-    let scancode: u8 = unsafe { data_port.read() };
+    let scancode: u8 = unsafe { KEYBOARD_BUFFER };
 
     if let Ok(Some(key_event)) = keyboard.add_byte(scancode) {
         if let Some(key) = keyboard.process_keyevent(key_event) {
@@ -27,9 +43,5 @@ pub extern "x86-interrupt" fn handle_keyboard_interrupt(_stack: InterruptStackFr
                 DecodedKey::RawKey(key) => print!("{:?}", key),
             }
         }
-    }
-
-    unsafe {
-        PICS.lock().notify_end_of_interrupt(33);
     }
 }

@@ -1,6 +1,6 @@
 use x86_64::structures::idt::{HandlerFunc, InterruptStackFrame};
 
-use super::guardian;
+use super::guardian::guardian;
 
 pub static INTERRUPT_HANDLERS: [HandlerFunc; 32] = [
     handle_interrupt_32,

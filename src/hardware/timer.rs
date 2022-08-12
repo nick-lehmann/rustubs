@@ -1,6 +1,6 @@
 use x86_64::structures::idt::InterruptStackFrame;
 
-use crate::{print, interrupts::PICS};
+use crate::{interrupts::PICS, print};
 
 pub extern "x86-interrupt" fn handle_timer_interrupt(_stack: InterruptStackFrame) {
     print!(".");
