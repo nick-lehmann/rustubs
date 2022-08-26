@@ -12,6 +12,7 @@ pub mod gdt;
 mod hardware;
 mod interrupts;
 pub mod serial;
+mod utils;
 
 use hardware::keyboard::KEYBOARD_GATE;
 use interrupts::PICLine;
