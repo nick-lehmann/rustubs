@@ -3,7 +3,7 @@ use pc_keyboard::{layouts, DecodedKey, HandleControl, Keyboard, ScancodeSet1};
 use spin::Mutex;
 use x86_64::instructions::port::Port;
 
-use crate::{print, interrupts::Gate};
+use crate::{interrupts::Gate, print};
 
 lazy_static! {
     static ref KEYBOARD: Mutex<Keyboard<layouts::Us104Key, ScancodeSet1>> = Mutex::new(
