@@ -47,7 +47,7 @@ impl<T, const SIZE: usize> RingBuffer<T, SIZE> {
         if self.head >= self.tail {
             return self.head - self.tail;
         }
-        return SIZE - self.tail + self.head;
+        SIZE - self.tail + self.head
     }
 }
 
