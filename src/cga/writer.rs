@@ -4,6 +4,7 @@ use spin::Mutex;
 use super::{
     buffer::{Buffer, Position, CGA_BUFFER_ADDRESS, CGA_BUFFER_HEIGHT, CGA_BUFFER_WIDTH},
     characters::{DisplayChar, HighASCII},
+    cursor::set_cursor_position,
     Color, ColorCode,
 };
 
@@ -31,6 +32,18 @@ impl Default for Writer {
 pub fn _print(args: core::fmt::Arguments) {
     use core::fmt::Write;
     WRITER.lock().write_fmt(args).unwrap();
+}
+
+#[doc(hidden)]
+pub fn _clear() {
+    WRITER.lock().clear();
+}
+
+#[macro_export]
+macro_rules! clear {
+    () => {
+        $crate::cga::writer::_clear()
+    };
 }
 
 #[macro_export]
@@ -80,11 +93,19 @@ impl Writer {
         for byte in string.bytes() {
             self.write_byte(byte);
         }
+        set_cursor_position(&self.position);
     }
 
     /// Sets the color code used for all subsequent writes.
     pub fn set_color(&mut self, color_code: ColorCode) {
         self.color_code = color_code;
+    }
+
+    // Clears the whole screen.
+    pub fn clear(&mut self) {
+        for line in 0..CGA_BUFFER_HEIGHT {
+            self.clear_line(line);
+        }
     }
 
     /// Clears all characters on the given line by replacing it with blanks in
@@ -122,6 +143,7 @@ impl Writer {
         }
 
         self.position.line += 1;
+        set_cursor_position(&self.position);
     }
 }
 

@@ -6,11 +6,16 @@
 
 use core::panic::PanicInfo;
 
-use rustubs::{init, println};
+use rustubs::{clear, init, println};
 
 #[no_mangle]
 pub extern "C" fn _start() -> ! {
-    println!("Hello World!");
+    // Invoke this first to set all color codes in the CGA buffer.
+    // Otherwise, the cursor which is always one cell ahead of the most recent byte,
+    // will not show.
+    clear!();
+
+    println!("Hello brave new World!");
 
     init();
 
