@@ -1,4 +1,4 @@
-use super::types::{IRQId};
+use super::types::IRQId;
 use super::{guard::LEVEL1, PICS, PLUGBOX};
 use crate::println;
 
