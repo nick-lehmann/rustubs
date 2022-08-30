@@ -57,6 +57,7 @@ dependencies = [
 name = "rustubs"
 version = "0.1.0"
 dependencies = [
+ "bitflags",
  "bootloader",
  "lazy_static",
  "pc-keyboard",
