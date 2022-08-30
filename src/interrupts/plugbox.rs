@@ -36,22 +36,31 @@ impl Plugbox {
             pics.disable();
         };
 
-        Plugbox::setup_traps();
+        Plugbox::setup_exceptions();
         let gates = Plugbox::initialize_gates();
 
         Plugbox { gates }
     }
 
-    /// Traps are signals from the CPU that something has gone wrong.
+    /// Exceptions are signals from the CPU that something has gone wrong.
+    ///
+    /// Exceptions are categorized into the following:
+    /// - Faults: These can be corrected and the program may continue as if
+    ///   nothing happened.
+    /// - Traps: Traps are reported immediately after the execution of the
+    ///   trapping instruction.
+    /// - Aborts: Some severe unrecoverable error.
+    ///
+    /// Source: https://wiki.osdev.org/Exceptions
     ///
     /// These are part of RUSTUBS. Hence, the user cannot configure them.
-    fn setup_traps() {
+    fn setup_exceptions() {
         unsafe {
             IDT.breakpoint.set_handler_fn(traps::handle_breakpoint);
 
             IDT.double_fault
                 .set_handler_fn(traps::handle_double_fault)
-                .set_stack_index(gdt::tss::DOUBLE_FAULT_IST_INDEX); // new
+                .set_stack_index(gdt::tss::DOUBLE_FAULT_IST_INDEX);
         }
     }
 

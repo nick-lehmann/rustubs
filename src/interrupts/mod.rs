@@ -5,6 +5,7 @@ mod handlers;
 mod pic;
 mod plugbox;
 mod traps;
+mod types;
 
 pub use gate::Gate;
 pub use pic::{PICLine, PICS};
