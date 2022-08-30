@@ -8,7 +8,7 @@ pub enum Color {
     Red = 4,
     Magenta = 5,
     Brown = 6,
-    LightGray = 7,
+    LightGray = 7, // White with low intensity
     DarkGray = 8,
     LightBlue = 9,
     LightGreen = 10,
