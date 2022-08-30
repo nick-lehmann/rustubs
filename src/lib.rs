@@ -11,10 +11,14 @@ pub mod cga;
 pub mod gdt;
 mod hardware;
 mod interrupts;
+mod machine;
 pub mod serial;
 mod utils;
 
-use hardware::keyboard::KEYBOARD_GATE;
+use hardware::{
+    keyboard::KEYBOARD_GATE,
+    timer::{TIMER_GATE, WATCH},
+};
 use interrupts::PICLine;
 
 use crate::interrupts::PLUGBOX;
@@ -25,7 +29,11 @@ pub fn init() {
     let mut plugbox = PLUGBOX.lock();
     plugbox.load();
 
-    // plugbox.assign(PICLine::Timer, handle_timer_interrupt);
+    plugbox.assign(PICLine::Timer, &TIMER_GATE);
+    unsafe {
+        WATCH.set(1000);
+    }
+
     plugbox.assign(PICLine::Keyboard, &KEYBOARD_GATE);
 
     x86_64::instructions::interrupts::enable();
